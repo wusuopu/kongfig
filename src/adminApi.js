@@ -22,7 +22,7 @@ function createApi({ router, getPaginatedJson, ignoreConsumers }) {
         fetchApis: () => getPaginatedJson(router({name: 'apis'})),
         fetchGlobalPlugins: () => getPaginatedJson(router({name: 'plugins'})),
         fetchPlugins: apiId => getPaginatedJson(router({name: 'api-plugins', params: {apiId}})),
-        fetchConsumers: () => ignoreConsumers ? Promise.resolve([]) : getPaginatedJson(router({name: 'consumers'})),
+        fetchConsumers: () => ignoreConsumers ? fetchFewConsumers(router) : getPaginatedJson(router({name: 'consumers'})),
         fetchConsumerCredentials: (consumerId, plugin) => getPaginatedJson(router({name: 'consumer-credentials', params: {consumerId, plugin}})),
         fetchConsumerAcls: (consumerId) => getPaginatedJson(router({name: 'consumer-acls', params: {consumerId}})),
         fetchUpstreams: () => getPaginatedJson(router({name: 'upstreams'})),
@@ -112,6 +112,18 @@ function getPaginatedJson(uri) {
 
         return getPaginatedJson(json.next).then(data => json.data.concat(data));
     });
+}
+
+
+async function fetchFewConsumers(router) {
+  let result = [];
+  for (let c of (global.KONG_CONSUMERS_CONFIG || [])) {
+    let response = await requester.get(router({name: 'consumer', params: {consumerId: c.username}}))
+    if (response.ok) {
+      result.push(await response.json())
+    }
+  }
+  return result;
 }
 
 const prepareOptions = ({method, body}) => {

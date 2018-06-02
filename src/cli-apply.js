@@ -55,6 +55,7 @@ if (!host) {
 }
 
 if (ignoreConsumers) {
+    global.KONG_CONSUMERS_CONFIG = config.consumers;
     config.consumers = [];
 }
 else {

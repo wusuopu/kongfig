@@ -551,11 +551,6 @@ const swapConsumerReference = (world, plugin) => {
 
         newPluginDef = { ...plugin, attributes: { config: { anonymous, ...config }, ...attributes } };
     }
-    if (plugin.attributes.hasOwnProperty('config') && plugin.attributes.config.anonymous_uuid) {
-        const anonymous = plugin.attributes.config.anonymous_uuid;
-
-        newPluginDef = { ...plugin, attributes: { config: { anonymous, ...config }, ...attributes } };
-    }
 
     if (plugin.attributes.hasOwnProperty('username') && plugin.attributes.username) {
         const { username, ...attributes } = plugin.attributes; // remove username
